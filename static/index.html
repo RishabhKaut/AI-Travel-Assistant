@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>My Singapore Travel Assistant</title>
+<style>
+  :root { color-scheme: light dark; }
+  body { font-family: system-ui, sans-serif; max-width: 760px; margin: 0 auto; padding: 24px; background: #0b0c10; color: #eaeaea; }
+  h1 { font-size: 1.3rem; }
+  #chat { border: 1px solid #333; border-radius: 8px; padding: 12px; height: 60vh; overflow-y: auto; margin-bottom: 12px; background: #16171c; }
+  .msg { margin: 10px 0; padding: 10px 12px; border-radius: 8px; white-space: pre-wrap; line-height: 1.4; }
+  .user { background: #1f3a5f; margin-left: 15%; }
+  .bot { background: #22242c; margin-right: 15%; }
+  .tools { font-size: 0.75rem; color: #8fbf8f; margin-top: 6px; }
+  form { display: flex; gap: 8px; }
+  input[type=text] { flex: 1; padding: 10px; border-radius: 6px; border: 1px solid #444; background: #16171c; color: #eaeaea; }
+  button { padding: 10px 16px; border-radius: 6px; border: none; background: #2b6cb0; color: white; cursor: pointer; }
+  button:disabled { opacity: 0.6; cursor: not-allowed; }
+  .examples { font-size: 0.8rem; color: #999; margin-bottom: 10px; }
+</style>
+</head>
+<body>
+  <h1>AI Travel Planning Assistant — Singapore</h1>
+  <div class="examples" style="margin-bottom:16px; color:#bbb;">Built with LangChain, LangGraph, FastAPI &amp; MCP — combining a Singapore travel knowledge base (RAG) with live weather &amp; currency tools.</div>
+  <div class="examples">
+    Try: "What are the must-visit attractions in Singapore?" ·
+    "What's the weather forecast for the next 3 days?" ·
+    "Convert INR 50,000 to SGD" ·
+    "Plan a three-day trip and adjust it based on the weather forecast."
+  </div>
+  <div id="chat"></div>
+  <form id="form">
+    <input type="text" id="input" placeholder="Ask about your Singapore trip..." autocomplete="off" />
+    <button type="submit" id="send">Send</button>
+  </form>
+
+<script>
+const chatEl = document.getElementById('chat');
+const form = document.getElementById('form');
+const input = document.getElementById('input');
+const sendBtn = document.getElementById('send');
+let sessionId = localStorage.getItem('travel_session_id') || null;
+
+function addMessage(text, cls, toolsUsed) {
+  const div = document.createElement('div');
+  div.className = 'msg ' + cls;
+  div.textContent = text;
+  if (toolsUsed && toolsUsed.length) {
+    const t = document.createElement('div');
+    t.className = 'tools';
+    t.textContent = 'Tools used: ' + toolsUsed.join(', ');
+    div.appendChild(t);
+  }
+  chatEl.appendChild(div);
+  chatEl.scrollTop = chatEl.scrollHeight;
+}
+
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const message = input.value.trim();
+  if (!message) return;
+  addMessage(message, 'user');
+  input.value = '';
+  sendBtn.disabled = true;
+  try {
+    const resp = await fetch('/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message, session_id: sessionId })
+    });
+    const data = await resp.json();
+    if (!resp.ok) throw new Error(data.detail || 'Request failed');
+    sessionId = data.session_id;
+    localStorage.setItem('travel_session_id', sessionId);
+    addMessage(data.answer, 'bot', data.tools_used);
+  } catch (err) {
+    addMessage('Error: ' + err.message, 'bot');
+  } finally {
+    sendBtn.disabled = false;
+  }
+});
+</script>
+</body>
+</html>
