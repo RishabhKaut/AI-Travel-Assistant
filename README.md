@@ -2,6 +2,7 @@
 
 **Submitted by:** [Rishabh Kaut]
 **Date:** [20-09-2026]
+**Github Repo Link:** https://github.com/RishabhKaut/AI-Travel-Assistant
 **Assignment:** AI Travel Planning Assistant 
 
 > A context-aware travel assistant I built that combines a document-based
