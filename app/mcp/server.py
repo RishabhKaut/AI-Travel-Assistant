@@ -5,7 +5,7 @@ assignment:
   1. get_weather_forecast - current + multi-day forecast for the configured
      destination, via the free Open-Meteo API (no key required).
   2. convert_currency - currency conversion between two ISO codes, via the
-     free exchangerate.host API (no key required).
+     free frankfurter.dev API (no key required).
 
 This is a real Model Context Protocol server (stdio transport) built with
 the official `mcp` Python SDK. The FastAPI app never calls these tools

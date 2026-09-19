@@ -49,7 +49,7 @@ LangGraph** and served over a **FastAPI** backend.
                     ▼                                    │  - get_weather_forecast     │
        ┌─────────────────────────┐                       │    (Open-Meteo API)         │
        │ FAISS vector store        │                     │  - convert_currency         │
-       │ app/rag/retriever.py      │                     │    (exchangerate.host API)  │
+       │ app/rag/retriever.py      │                     │    (frankfurter.dev API)  │
        │ built by app/rag/ingest.py│                     └────────────────────────────┘
        │ from app/data/raw/*.md    │
        └───────────────────────────┘
@@ -136,7 +136,7 @@ matter format) into `app/data/raw/` and re-run the ingestion step below.
 | Tool | Purpose | Backing API | Failure handling |
 |---|---|---|---|
 | `get_weather_forecast(days, location)` | Current conditions + up to 7-day forecast | [Open-Meteo](https://open-meteo.com/) (free, no API key) | Raises a clear `RuntimeError` on failure; the agent is instructed to tell the user live weather could not be retrieved rather than guessing |
-| `convert_currency(amount, from_currency, to_currency)` | FX conversion between two ISO codes | [exchangerate.host](https://frankfurter.dev/) (free, no API key) | Same — raises rather than fabricating a rate |
+| `convert_currency(amount, from_currency, to_currency)` | FX conversion between two ISO codes | [frankfurter.dev](https://frankfurter.dev/) (free, no API key) | Same — raises rather than fabricating a rate |
 
 Both tools live in `app/mcp/server.py`, a standalone **MCP server**
 (stdio transport, built with `mcp.server.fastmcp.FastMCP`) that can be run
